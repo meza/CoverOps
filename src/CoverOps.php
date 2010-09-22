@@ -47,7 +47,7 @@ class CoverOps
     public function __construct()
     {
         $path = explode(PATH_SEPARATOR, get_include_path());
-        $path[] = realpath(dirname(__FILE__).'/../vendor/').'/php-code-coverage';
+        array_unshift($path, realpath(dirname(__FILE__).'/../vendor/').'/php-code-coverage');
         $p = implode(PATH_SEPARATOR, $path);
         set_include_path($p);
         var_dump($path, $p);
@@ -94,4 +94,5 @@ class CoverOps
     }
 
 }//end class
+
 ?>
