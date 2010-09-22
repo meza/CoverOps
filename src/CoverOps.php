@@ -94,16 +94,4 @@ class CoverOps
     }
 
 }//end class
-
-
-$cov = new CoverOps();
-$cov->initDir('/home/meza/dev/ustream/trunk/apps/watershed.ustream.tv');
-$cov->processDir('/home/meza/dev/ustream/tmp/logs/coverage');
-
-$l = dirname(__FILE__).'/l';
-if (false === file_exists($l)) {
-    mkdir($l, 0777, true);
-}
-$cov->writeHTML($l);
-
 ?>
