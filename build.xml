@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CoverOps" default="build">
+
+<!-- set default properties -->
+    <property file="${basedir}/build.properties"/>
+    <property name="vendor.dir"   location="${basedir}/vendor"/>
+
+<!-- import ant-helpers -->
+    <import file="${basedir}/ant-helpers/shell.xml" />
+
+
+<!-- Build the project -->
+    <target name="build" description="Build the project"/>
+
+</project>
