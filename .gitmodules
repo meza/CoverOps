@@ -3,4 +3,4 @@
 	url = git://github.com/meza/ant-helpers.git
 [submodule "vendor/php-code-coverage"]
 	path = vendor/php-code-coverage
-	url = git@github.com:meza/php-code-coverage.git
+	url = git://github.com/meza/php-code-coverage.git
