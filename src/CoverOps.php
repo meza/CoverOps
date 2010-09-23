@@ -20,7 +20,8 @@
  */
 
 /**
- * The CoverOps class is responsible for ...
+ * The CoverOps class is responsible for parsing coverage log files to a
+ * form that can be overviwed by human or machine.
  *
  * PHP Version: PHP 5
  *
@@ -42,56 +43,179 @@ class CoverOps
     /**
      * @var PHP_CodeCoverage;
      */
-    private $coverage;
+    private $_coverage;
 
+
+    /**
+     * Constructs the object
+     *
+     * @return CoverOps
+     */
     public function __construct()
     {
         $path = explode(PATH_SEPARATOR, get_include_path());
         array_unshift($path, realpath(dirname(__FILE__).'/../vendor/').'/php-code-coverage');
         $p = implode(PATH_SEPARATOR, $path);
         set_include_path($p);
-        var_dump($path, $p);
         require_once 'PHP/CodeCoverage.php';
         require_once 'PHP/CodeCoverage/Report/Clover.php';
         require_once 'PHP/CodeCoverage/Report/HTML.php';
 
         $this->filter = new PHP_CodeCoverage_Filter();
-        $this->coverage = new PHP_CodeCoverage(
+        $this->_coverage = new PHP_CodeCoverage(
             new PHP_CodeCoverage_Driver_Xdebug(),
             $this->filter
         );
 
-    }
+    }//end __construct()
 
-    public function initDir($dir)
+
+    /**
+     * Add a directory to the white list of the coverage.
+     *
+     * @param string $directory The directory to add
+     *
+     * @return void
+     */
+    public function addWhitelistDir($directory)
     {
-        $this->filter->addDirectoryToWhitelist($dir);
-    }
+        $this->filter->addDirectoryToWhitelist($directory);
 
-    public function processDir($dir)
+    }//end addWhitelistDir()
+
+
+    /**
+     * Add a file to the white list of the coverage.
+     *
+     * @param string $dir The directory to add
+     *
+     * @return void
+     */
+    public function addWhitelistFile($filename)
+    {
+        $this->filter->addFileToWhitelist($filename);
+
+    }//end addWhitelistFile()
+
+
+    /**
+     * Add a directory to the black list of the coverage.
+     *
+     * @param string $directory The directory to add
+     *
+     * @return void
+     */
+    public function addBlacklistDir($directory)
+    {
+        $this->filter->addDirectoryToBlacklist($directory);
+
+    }//end addBlacklistDir()
+
+
+    /**
+     * Add a file to the black list of the coverage.
+     *
+     * @param string $dir The directory to add
+     *
+     * @return void
+     */
+    public function addBlacklistFile($filename)
+    {
+        $this->filter->addFileToBlacklist($filename);
+
+    }//end addBlacklistFile()
+
+
+    /**
+     * Process a directory of log files
+     *
+     * @param string $dir The dir name to process
+     *
+     * @return void
+     */
+    public function processLogDir($dir)
     {
         $f = opendir($dir);
         while($file = readdir($f)) {
             if ($file!='.' && $file!='..') {
-                var_dump($dir.DIRECTORY_SEPARATOR.$file);
-                $d = unserialize(file_get_contents($dir.DIRECTORY_SEPARATOR.$file));
-                $this->coverage->append($d, $file);
+                $this->processLogFile($dir.DIRECTORY_SEPARATOR.$file);
             }
         }
 
-    }
-    
+    }//end processLogDir()
+
+
+    /**
+     * Process a log file (containing serialized coverage data)
+     *
+     * @param string $filename The filename to process
+     *
+     * @return void
+     */
+    public function processLogFile($filename)
+    {
+        $this->addSerializedCoverageData(file_get_contents($filename));
+        
+    }//end processLogFile()
+
+
+    /**
+     * Add a serialized coverage data unit to the overall coverage data.
+     *
+     * @param string $data Serialized array of the coverage data.
+     *
+     * @return void
+     */
+    public function addSerializedCoverageData($data)
+    {
+        $this->addCoverageData(unserialize($data));
+
+    }//end addSerializedCoverageData()
+
+
+    /**
+     * Add coverage data to the overall log.
+     *
+     * @param array $data The coverage data to append.
+     *
+     * @return void
+     */
+    public function addCoverageData(array $data)
+    {
+        $this->_coverage->append($data, $filename);
+
+    }//end addCoverageData()
+
+
+    /**
+     * Create the HTML report to the specified directory.
+     *
+     * @param string $toDir The directory for the html output.
+     *
+     * @return void
+     */
     public function writeHTML($toDir)
     {
         $writer   = new PHP_CodeCoverage_Report_HTML();
-        $writer->process($this->coverage, $toDir);
-    }
+        $writer->process($this->_coverage, $toDir);
 
-    public function writeCoverLog(HP$to)
+    }//end writeHTML()
+
+
+    /**
+     * Create a clover.xml report file to the specified location.
+     *
+     * @param string $to The filename to put the log to.
+     *
+     * @return void
+     */
+    public function writeClover($to)
     {
         $writer   = new PHP_CodeCoverage_Report_Clover();
-        $writer->process($this->coverage, $to);
-    }
+        $writer->process($this->_coverage, $to);
+
+    }//end writeClover()
+
 
 }//end class
 
