@@ -154,7 +154,10 @@ class CoverOps
      */
     public function processLogFile($filename)
     {
-        $this->addSerializedCoverageData(file_get_contents($filename));
+        $this->addSerializedCoverageData(
+            file_get_contents($filename),
+            $filename
+        );
         
     }//end processLogFile()
 
@@ -162,13 +165,14 @@ class CoverOps
     /**
      * Add a serialized coverage data unit to the overall coverage data.
      *
-     * @param string $data Serialized array of the coverage data.
+     * @param string $data     Serialized array of the coverage data.
+     * @param string $testName The name of the coverage test
      *
      * @return void
      */
-    public function addSerializedCoverageData($data)
+    public function addSerializedCoverageData($data, $testName)
     {
-        $this->addCoverageData(unserialize($data));
+        $this->addCoverageData(unserialize($data), $testName);
 
     }//end addSerializedCoverageData()
 
@@ -176,13 +180,14 @@ class CoverOps
     /**
      * Add coverage data to the overall log.
      *
-     * @param array $data The coverage data to append.
+     * @param array  $data     The coverage data to append.
+     * @param string $testName The name of the coverage test
      *
      * @return void
      */
-    public function addCoverageData(array $data)
+    public function addCoverageData(array $data, $testName)
     {
-        $this->_coverage->append($data, $filename);
+        $this->_coverage->append($data, $testName);
 
     }//end addCoverageData()
 
