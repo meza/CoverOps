@@ -1,6 +1,3 @@
 [submodule "ant-helpers"]
 	path = ant-helpers
 	url = git://github.com/meza/ant-helpers.git
-[submodule "vendor/php-code-coverage"]
-	path = vendor/php-code-coverage
-	url = git://github.com/meza/php-code-coverage.git
